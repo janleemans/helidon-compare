@@ -109,8 +109,8 @@ curl -X GET http://localhost:8080/greet/XYYYY
 
 where X can be:
 
-    * V: virtual thread
-    * N: normal thread
+    ** V: virtual thread
+    ** N: normal thread
 
 and YYYY is the number of threads to run in parallel.
 
