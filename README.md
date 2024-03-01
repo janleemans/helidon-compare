@@ -52,7 +52,7 @@ Yep, it starts fast. You can exercise the application’s endpoints as before.
 
 ## Comparing startup speeds of the different options
 
-Make sure you stopped all the 4 frameworks before going forward: no response should come back when calling the service:
+Make sure you stop all the servers you might have launched up till now before going forward: no response should come back when calling the service:
 
 ```bash
 curl -X GET http://localhost:8080/greet
