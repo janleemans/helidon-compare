@@ -59,7 +59,7 @@ curl -X GET http://localhost:8080/greet
     curl: (7) Failed to connect to localhost port 8080 after 0 ms: Couldn't connect to server
 ```
 
-Now you can use the python script called **measyre.py** to compare the startup speed of the frameworks.  Use -h to get the accepted frameworks you can pass as a parameter:
+Now you can use the python script called **measure.py** to compare the startup speed of the frameworks.  Use -h to get the accepted frameworks you can pass as a parameter:
 
 ```bash
 python measure.py -h
