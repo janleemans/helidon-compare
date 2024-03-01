@@ -10,10 +10,10 @@ import requests
 processes = []
 framework_pids = []
 
-runtimes = {"HelidonSE": "frameworks/helidonSE/target/helidon-se.jar",
-            "HelidonMP": "frameworks/helidonMP/target/helidon-mp.jar",
-            "Nima": "frameworks/nima/target/helidon-nima.jar",
-            "SpringBoot": "frameworks/springboot/target/spring.jar"}
+runtimes = {"HelidonSE": "frameworks/helidonSE/target/helidon-quickstart-se.jar",
+            "HelidonMP": "frameworks/helidonMP/target/helidon-quickstart-mp.jar",
+            "SpringBoot": "frameworks/springboot/target/spring.jar",
+            "GraalMP": "frameworks/helidonMP/target/helidon-quickstart-mp"}
 
 
 class PerformanceRunner:
@@ -34,6 +34,15 @@ class PerformanceRunner:
         processes.append(process)
         self.framework_pid = process.pid
         self.process = process
+
+    def run_exe(self, jar_file):
+        params = [jar_file]
+        self.start_time = time.perf_counter()
+        process = Popen(params, stdout=PIPE, stderr=PIPE)
+        processes.append(process)
+        self.framework_pid = process.pid
+        self.process = process
+
 
     def see_rss(self):
         process = Popen(["ps", "-o", "rss", "-p", str(self.framework_pid)], stdout=PIPE, stderr=PIPE)
@@ -93,7 +102,7 @@ def get_program_arguments():
     parser = argparse.ArgumentParser(
         prog='Test framework start time')
 
-    parser.add_argument("-f", "--framework", choices=["HelidonSE", "HelidonMP", "Nima", "SpringBoot"], required=True)
+    parser.add_argument("-f", "--framework", choices=["HelidonSE", "HelidonMP", "SpringBoot","GraalMP"], required=True)
 
     return parser.parse_args()
 
@@ -104,7 +113,10 @@ if __name__ == '__main__':
     framework = runtimes[args.framework]
     for n in range(10):
         runner = PerformanceRunner()
-        runner.run_java(framework)
+        if args.framework == 'GraalMP':
+            runner.run_exe(framework)
+        else:
+            runner.run_java(framework)
 
         running = runner.wait_for({"framework": framework})
         if running:

@@ -57,3 +57,6 @@ out/
 
 # Python virtual env
 __pycache__
+
+# Mac
+.DS_Store
