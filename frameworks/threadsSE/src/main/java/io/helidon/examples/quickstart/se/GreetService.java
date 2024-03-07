@@ -18,25 +18,66 @@ import java.util.concurrent.*;
 import java.util.Random;
 
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.charset.StandardCharsets;
+import java.io.IOException;
+
+
+
 class DoSomethingInAThread implements Runnable{
     CountDownLatch latch;
+    int sleepTime;
     Random random = new Random();
-    public DoSomethingInAThread(CountDownLatch latch){
+    public DoSomethingInAThread(CountDownLatch latch, int sleepTime){
         this.latch = latch;
+        this.sleepTime = sleepTime;
     }
     public void run() {
         try{
             int a = random.nextInt(10000);
             int b = random.nextInt(10000);
             double c = a * b;
-            System.out.println("In Thread, multiply " + a + " with " + b + " gives " + c);
-            Thread.sleep(100);
+            Thread.sleep(sleepTime);
+            System.out.println("In Thread, " + a + " times " + b + " gives " + c);
             latch.countDown();
         }catch(Exception err){
             err.printStackTrace();
         }
     }
 }
+
+class FileReader {
+    public String readFileContents(String filePath) {
+        try {
+            Path file = Path.of(filePath);
+            System.out.println("Reading the file");
+            return Files.readString(file, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "Error reading file.";
+        }
+    }
+}
+
+class DoSomethingInAThread2 implements Runnable{
+    int sleepTime;
+    Random random = new Random();
+    public DoSomethingInAThread2(int sleepTime){
+        this.sleepTime = sleepTime;
+    }
+    public void run() {
+        try{
+            int a = random.nextInt(10000);
+            int b = random.nextInt(10000);
+            double c = a * b;
+            Thread.sleep(sleepTime);
+            System.out.println("In Thread, " + a + " times " + b + " gives " + c);
+        }catch(Exception err){
+            err.printStackTrace();
+            }
+        }
+    }
 
 /**
  * A simple service to greet you. Examples:
@@ -96,7 +137,7 @@ class GreetService implements HttpService {
         sendResponse(response, timeMsg);
     }
 
-    private String runThreads(boolean vThreads, int loopcount) {
+    private String runThreads(boolean vThreads, int loopcount, int sleepTime) {
 
         System.out.println( "Using vThreads: " + vThreads);
         long start = System.currentTimeMillis();
@@ -105,11 +146,11 @@ class GreetService implements HttpService {
             for (int n=0; n<loopcount; n++) {
                 if (vThreads){
                     System.out.println("Launch virtual "+n);
-                    Thread.startVirtualThread(new DoSomethingInAThread(latch));
+                    Thread.startVirtualThread(new DoSomethingInAThread(latch,sleepTime));
                 }
                 else {
                     System.out.println("Launch non-v "+n);
-                    Thread t = new Thread(new DoSomethingInAThread(latch));
+                    Thread t = new Thread(new DoSomethingInAThread(latch,sleepTime));
                     t.start();
                 }
             }
@@ -136,23 +177,47 @@ class GreetService implements HttpService {
         String name = request.path().pathParameters().get("name");
         String timeMsg = name;
         String threadType = name.substring(0,1);
-        String iters = name.substring(1);
-        int aa = 0;
+        String iters = "1";
+        String sleepStr = "10";
+        String hyphen = "-";
+
+        int hyphenIndex = name.indexOf(hyphen);
+        if (hyphenIndex >= 0) {
+            iters = name.substring(1, hyphenIndex);
+            sleepStr = name.substring(hyphenIndex + hyphen.length());
+        }
+
+        int iterInt = 1;
+        int sleepTime = 10;
+        DoSomethingInAThread2 aa;
+        FileReader myReader = new FileReader();
+
         try{
-            aa = Integer.parseInt(iters);
-            System.out.println("ThreadType=" + threadType+", iters="+aa);
+            iterInt = Integer.parseInt(iters);
+            sleepTime = Integer.parseInt(sleepStr);
+            System.out.println("ThreadType=" + threadType+", iters="+iterInt+", sleep="+sleepTime);
         }
         catch (NumberFormatException ex){
             System.out.println("No number to run, using 10");
-            aa = 10;
+            iterInt = 1;
+            sleepTime = 10;
         }
 
         if (threadType.equals("V")) {
             System.out.println("Run virtual");
-            timeMsg = runThreads(true, aa); }
-        if (threadType.equals("N")) {
+            timeMsg = runThreads(true, iterInt, sleepTime); }
+        else if (threadType.equals("N")) {
             System.out.println("Run normal");
-            timeMsg = runThreads(false, aa); }
+            timeMsg = runThreads(false, iterInt, sleepTime); }
+        else if (threadType.equals("S")) {
+            System.out.println("Run straight");
+            timeMsg = "Run Straight sleep";
+            aa = new DoSomethingInAThread2(sleepTime);
+            aa.run(); }
+        else if (threadType.equals("R")) {
+            timeMsg = myReader.readFileContents("target/textfile.txt");
+        }
+        else {System.out.println("Unknown command, no processing");}
         sendResponse(response, timeMsg);
     }
 

@@ -12,7 +12,7 @@ framework_pids = []
 
 runtimes = {"HelidonSE": "frameworks/helidonSE/target/helidon-quickstart-se.jar",
             "HelidonMP": "frameworks/helidonMP/target/helidon-quickstart-mp.jar",
-            "SpringBoot": "frameworks/springboot/target/spring.jar",
+            "SpringBoot": "frameworks/springboot/target/spring-boot-0.0.1-SNAPSHOT.jar",
             "GraalMP": "frameworks/helidonMP/target/helidon-quickstart-mp"}
 
 

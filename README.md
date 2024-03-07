@@ -104,21 +104,25 @@ curl -X GET http://localhost:8080/greet
 Or you can use the following syntax to specify execution of some math operation in a thread (virtual or normal) :
 
 ```bash
-curl -X GET http://localhost:8080/greet/XYYYY
+curl -X GET http://localhost:8080/greet/XYYYY-ZZZZ
 ```
 
-where X can be:
+where 
+* X can be:
+  * V: virtual thread
+  * N: normal thread
+  * S: do a single Sleep of the specified nb of microseconds
+  * R: Read a file and return the content in the response
 
-* V: virtual thread
-* N: normal thread
+ * YYYY is the number of threads to run in parallel,
 
-and YYYY is the number of threads to run in parallel.
+ * ZZZ is the length of the Sleep after each calculation in microseconds - can be 0 for no sleep.
 
-Example to run 3000 virtual threads:
+Example to run 3000 virtual threads with 200 ms sleep:
 
 ```bash
-curl -X GET http://localhost:8080/greet/V3000
-{"message":"Hello , running 3000 virtual threads in 190 milisecs.!"}
+curl -X GET http://localhost:8080/greet/V3000-200
+{"message":"Hello , running 3000 virtual threads in 257 milisecs.!"}
 ```
 
 Instead of the message "Hello World", you get the result of the test.
@@ -126,8 +130,8 @@ Instead of the message "Hello World", you get the result of the test.
 Or run 3000 normal threads:
 
 ```bash
-curl -X GET http://localhost:8080/greet/N3000
-{"message":"Hello , running 3000 virtual threads in normal threads in 552 milisecs.!"}
+curl -X GET http://localhost:8080/greet/N3000-200
+{"message":"Hello , running 3000 virtual threads in normal threads in 845 milisecs.!"}
 ```
 
 Increasing the counter will show the 10x factor difference in speed!
