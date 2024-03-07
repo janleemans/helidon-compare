@@ -115,7 +115,7 @@ public class HelloController {
             aa = new DoSomethingInAThread2(sleepTime);
             aa.run(); }
         else if (threadType.equals("R")) {
-            timeMsg = myReader.readFileContents("target/textfile.txt");
+            timeMsg = myReader.readFileContents("src/main/resources/textfile.txt");
         }
         else {System.out.println("Unknown command, no processing");}
         return timeMsg;
