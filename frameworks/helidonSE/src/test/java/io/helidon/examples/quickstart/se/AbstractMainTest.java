@@ -13,7 +13,7 @@ import jakarta.json.JsonObject;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.CoreMatchers.containsString;
+//import static org.hamcrest.CoreMatchers.containsString;
 
 abstract class AbstractMainTest {
     private final Http1Client client;
@@ -27,7 +27,6 @@ abstract class AbstractMainTest {
         Main.routing(builder);
     }
 
-    
     @Test
     void testGreeting() {
         ClientResponseTyped<JsonObject> response = client.get("/greet").request(JsonObject.class);
@@ -35,7 +34,6 @@ abstract class AbstractMainTest {
         assertThat(response.entity().getString("message"), is("Hello World!"));
     }
 
-    
     @Test
     void testMetricsObserver() {
         try (Http1ClientResponse response = client.get("/observe/metrics").request()) {
@@ -43,7 +41,6 @@ abstract class AbstractMainTest {
         }
     }
 
-    
     @Test
     void testSimpleGreet() {
         ClientResponseTyped<String> response = client.get("/simple-greet").request(String.class);

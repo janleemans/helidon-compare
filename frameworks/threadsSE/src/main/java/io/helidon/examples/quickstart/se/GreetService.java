@@ -60,6 +60,7 @@ class FileReader {
     }
 }
 
+// Same as original but no latch
 class DoSomethingInAThread2 implements Runnable{
     int sleepTime;
     Random random = new Random();
@@ -72,7 +73,7 @@ class DoSomethingInAThread2 implements Runnable{
             int b = random.nextInt(10000);
             double c = a * b;
             Thread.sleep(sleepTime);
-            System.out.println("In Thread, " + a + " times " + b + " gives " + c);
+            System.out.println("In Thread, " + a + " timess " + b + " gives " + c);
         }catch(Exception err){
             err.printStackTrace();
             }
